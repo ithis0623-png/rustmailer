@@ -106,10 +106,12 @@ impl SmtpClientManager {
     async fn build_client(account_id: u64) -> RustMailerResult<RustMailSmtpClient> {
         let account = AccountModel::get(account_id).await?;
 
-        let smtp = account
-            .smtp
-            .as_ref()
-            .expect("BUG: account.smtp is None, but it should always be present here");
+        let smtp = account.smtp.as_ref().ok_or_else(|| {
+            raise_error!(
+                format!("Account {} has no SMTP configuration", account_id),
+                ErrorCode::MissingConfiguration
+            )
+        })?;
 
         let credentials = match smtp.auth.auth_type {
             AuthType::Password => {

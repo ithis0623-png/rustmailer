@@ -18,7 +18,7 @@ use tracing::warn;
 use url::Url;
 
 pub static HREF_PATTERN: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r#"href\s*=\s*"([^"]+)""#).unwrap());
+    LazyLock::new(|| Regex::new(r#"href\s*=\s*["']([^"']+)["']"#).unwrap());
 
 pub struct EmailTracker {
     original_html: String,
